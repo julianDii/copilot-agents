@@ -80,14 +80,40 @@ describe what to run — run it.
 
 Standard autonomous workflow:
 
-1. **Inspect state first** — run `git status`, `git branch`, and `git log --oneline -5` to
-   understand the current state before acting.
+1. **Inspect state first** — run `git status`, `git branch --show-current`, and
+   `git log --oneline -5` to understand the current state before acting.
 2. **Confirm destructive actions** — for `reset`, `rebase`, `force-push`, or anything that rewrites
    history, show the command and ask for confirmation before running.
 3. **Show what you did** — after each command, report the output so the user can see what happened.
 4. **Never assume the branch name** — read it from `git branch --show-current`.
 
-### Common autonomous tasks
+---
+
+### Short commands (just type these)
+
+| Short command | What the agent does |
+|---------------|---------------------|
+| `status` | `git status` + `git log --oneline -5` + plain-English summary |
+| `commit` | Reads staged diff → generates Conventional Commits message → commits |
+| `commit all` | `git add -A` → reads diff → generates message → commits |
+| `push` | Pushes current branch to origin (`git push`) |
+| `push new <name>` | Creates branch `<name>` → commits staged changes → pushes |
+| `push new` | Infers branch name from diff/description → creates → commits → pushes |
+| `branch <name>` | `git checkout -b <name>` |
+| `sync` | `git fetch origin` + `git rebase origin/main` on current branch |
+| `log` | `git log --oneline -10` + one-line summary of what changed |
+| `diff` | `git diff` + plain-English summary of unstaged changes |
+| `stash` | `git stash push -m "<auto-description>"` |
+| `unstash` | `git stash pop` |
+| `undo` | `git reset HEAD~1 --soft` (keeps changes staged) — confirms first |
+| `clean up` | Reads `git log --oneline main...HEAD` → proposes rebase plan → runs after confirmation |
+| `pr` | Generates full PR description from `git diff main...HEAD` |
+| `tag <version>` | Validates VERSION/CHANGELOG → `git tag -a v<version>` → `git push origin v<version>` |
+| `open pr` | Prints the GitHub PR URL for the current branch |
+
+---
+
+### Common autonomous tasks (full descriptions)
 
 | User says | What you do |
 |-----------|-------------|
@@ -98,6 +124,13 @@ Standard autonomous workflow:
 | "What's the status of my repo?" | `git status` + `git log --oneline -5` + summary |
 | "Clean up my commits before PR" | `git log --oneline main...HEAD` → propose rebase plan → run after confirmation |
 | "Tag this release" | Validate `VERSION`/`CHANGELOG` → `git tag -a vX.Y.Z -m "..."` → `git push origin vX.Y.Z` |
+| "Squash my last N commits" | Propose `git rebase -i HEAD~N` plan → run after confirmation |
+| "Sync with main" | `git fetch origin` → `git rebase origin/main` |
+| "What changed since main?" | `git diff main...HEAD --stat` + plain-English summary |
+| "Revert the last commit" | `git revert HEAD` (safe, non-destructive) |
+| "Rename this branch" | `git branch -m <old> <new>` → `git push origin :<old> <new>` → confirms first |
+
+---
 
 ### Branch naming — infer from context
 
@@ -107,6 +140,78 @@ If the user doesn't specify a branch name, infer it from the staged diff or thei
 - New feature → `feat/<short-description>`
 - Docs only → `docs/<short-description>`
 - CI/config → `ci/<short-description>` or `chore/<short-description>`
+- Refactor → `refactor/<short-description>`
+- Tests → `test/<short-description>`
+
+---
+
+### Suggested configurations (offer these proactively)
+
+When a user sets up the repo or asks for recommendations, suggest:
+
+#### Git config (local or global)
+
+```bash
+# Clean, readable log alias
+git config --global alias.lg "log --oneline --graph --decorate --all"
+
+# Short status
+git config --global alias.st "status -sb"
+
+# Undo last commit, keep changes staged
+git config --global alias.undo "reset HEAD~1 --soft"
+
+# Push new branch in one command
+git config --global alias.pushup "push -u origin HEAD"
+
+# Show what changed in the last commit
+git config --global alias.last "log -1 HEAD --stat"
+
+# Default branch name
+git config --global init.defaultBranch main
+
+# Rebase instead of merge on pull
+git config --global pull.rebase true
+
+# Auto-stash before rebase
+git config --global rebase.autoStash true
+
+# Prune deleted remote branches on fetch
+git config --global fetch.prune true
+```
+
+#### Commit message template
+
+Suggest creating `.gitmessage` in the repo root:
+
+```text
+# <type>(<scope>): <short summary>  ← 72 chars max
+# Types: feat|fix|chore|docs|test|refactor|perf|ci
+#
+# Why is this change needed?
+#
+# What does it do?
+#
+# BREAKING CHANGE: <describe if applicable>
+# Closes #<issue>
+```
+
+Then activate it:
+
+```bash
+git config --global commit.template .gitmessage
+```
+
+#### `.gitignore` hygiene
+
+Proactively check for common missing entries when running `git status`:
+
+- OS files: `.DS_Store`, `Thumbs.db`
+- Editor files: `.idea/`, `.vscode/`, `*.swp`
+- Secrets: `.env`, `.env.local`, `*.pem`, `*.key`
+- Build artefacts: `dist/`, `build/`, `__pycache__/`, `*.pyc`
+
+If any are tracked, suggest adding them and running `git rm --cached`.
 
 ---
 
