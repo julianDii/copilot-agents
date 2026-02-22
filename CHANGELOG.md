@@ -12,6 +12,7 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 ## [2.0.0] — 2026-02-22
 
 ### Added
+
 - `evals/` directory — fixtures, rubric, and snapshot baseline for all three agents
   - 4 general fixtures (`bare_except`, `eval_usage`, `no_issues`, `missing_timeout`)
   - 6 Django fixtures (`n_plus_one`, `idor_view`, `migration_not_null`, `signal_business_logic`, `debug_settings`, `csrf_exempt`)
@@ -24,6 +25,7 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 - `EVALS.md` VERSION tracking + Snapshot + Last score columns
 
 ### Changed
+
 - All three agents revised against community standards (`awesome-copilot`, `cursor.directory`)
   - `code-review`: restructured (scope first, bold lenses, Never block, severity calibration)
   - `django-review`: added settings/config (Blocker), migration safety, signals, Celery, rate limiting, ❌/✅ examples
@@ -34,6 +36,7 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 - `sync-agents.sh` usage clarified: `evals/` explicitly not copied to target projects
 
 ### Fixed
+
 - Markdown linter warning: numbered list continuity in `code-review.agent.md`
 - Stale `tools: [codebase]` reference in README (VS Code-only name, invalid in JetBrains)
 
@@ -42,12 +45,14 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 ## [1.2.0] — 2026-02-15
 
 ### Added
+
 - `react-ts-review.agent.md` — React + TypeScript specialist review agent
 - `django-review.agent.md` — Django/DRF specialist review agent
 - `PROMPTS.md` — initial prompt guide
 - `.gitignore`
 
 ### Changed
+
 - `sync-agents.sh` — added per-repo deployment mode with backup guards
 
 ---
@@ -55,6 +60,7 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 ## [1.1.0] — 2026-02-10
 
 ### Added
+
 - `code-review.agent.md` — general code review agent
 - `scripts/sync-agents.sh` — deploy script with `--global` mode
 - `.vscode/settings.json` — wires instructions for VS Code
@@ -64,6 +70,7 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 ## [1.0.0] — 2026-02-01
 
 ### Added
+
 - `instructions/global-copilot-instructions.md` — 9-section global instruction file
 - `README.md` — setup and usage documentation
 - `VERSION`

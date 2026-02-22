@@ -1,0 +1,230 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── 1. Markdown lint ─────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli@0.39.0
+
+      - name: Lint Markdown files
+        run: |
+          markdownlint \
+            "**/*.md" \
+            --ignore node_modules \
+            --ignore ".github/copilot-instructions.md" \
+            --ignore "evals/snapshots/**" \
+            --config .markdownlint.json
+
+  # ── 2. Snapshot regression check ─────────────────────────────────────────────
+  snapshots:
+    name: Snapshot integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check all snapshots are present
+        run: |
+          set -euo pipefail
+          missing=0
+
+          check_snapshot() {
+            local snapshot="evals/snapshots/$1"
+            if [[ ! -f "${snapshot}" ]]; then
+              echo "MISSING snapshot: ${snapshot}"
+              missing=$((missing + 1))
+            fi
+          }
+
+          # code-review agent
+          check_snapshot "general-bare-except.md"
+          check_snapshot "general-eval-usage.md"
+          check_snapshot "general-no-issues.md"
+          check_snapshot "general-missing-timeout.md"
+
+          # django-review agent
+          check_snapshot "django-n-plus-one.md"
+          check_snapshot "django-idor-view.md"
+          check_snapshot "django-migration-not-null.md"
+          check_snapshot "django-signal-business-logic.md"
+          check_snapshot "django-debug-settings.md"
+          check_snapshot "django-csrf-exempt.md"
+
+          # react-ts-review agent
+          check_snapshot "react-stale-closure.md"
+          check_snapshot "react-xss-risk.md"
+          check_snapshot "react-missing-abort.md"
+          check_snapshot "react-unstable-key.md"
+          check_snapshot "react-unsafe-assertion.md"
+          check_snapshot "react-no-issues.md"
+
+          # global compliance
+          check_snapshot "global-s1-response-format.md"
+          check_snapshot "global-s2-new-dependency.md"
+          check_snapshot "global-s2-new-file.md"
+          check_snapshot "global-s4-requirements.md"
+          check_snapshot "global-s9-commit-message.md"
+
+          if [[ ${missing} -gt 0 ]]; then
+            echo "❌ ${missing} snapshot(s) missing. Run evals and commit results."
+            exit 1
+          fi
+          echo "✔ All snapshots present ($(ls evals/snapshots/*.md | wc -l | tr -d ' ') files)"
+
+      - name: Check snapshots not empty
+        run: |
+          set -euo pipefail
+          empty=0
+          for f in evals/snapshots/*.md; do
+            lines=$(wc -l < "${f}")
+            if [[ ${lines} -lt 3 ]]; then
+              echo "EMPTY snapshot: ${f}"
+              empty=$((empty + 1))
+            fi
+          done
+          if [[ ${empty} -gt 0 ]]; then
+            echo "❌ ${empty} snapshot(s) are empty or too short."
+            exit 1
+          fi
+          echo "✔ All snapshots have content"
+
+  # ── 3. Agent frontmatter validation ──────────────────────────────────────────
+  agents:
+    name: Agent validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate agent frontmatter
+        run: |
+          set -euo pipefail
+          errors=0
+
+          for agent in .github/agents/*.agent.md; do
+            [[ -f "${agent}" ]] || continue
+            name="$(basename "${agent}")"
+
+            # Must have --- frontmatter
+            if ! head -1 "${agent}" | grep -q "^---"; then
+              echo "MISSING frontmatter: ${name}"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            # Must have description field
+            if ! grep -q "^description:" "${agent}"; then
+              echo "MISSING description: ${name}"
+              errors=$((errors + 1))
+            fi
+
+            # Must have tools field
+            if ! grep -q "^tools:" "${agent}"; then
+              echo "MISSING tools: ${name}"
+              errors=$((errors + 1))
+            fi
+
+            # Must not use VS Code-only tool names
+            for bad_tool in "codebase" "fetch" "githubRepo"; do
+              if grep -q "tools:.*${bad_tool}" "${agent}"; then
+                echo "INVALID tool '${bad_tool}' in ${name} — VS Code-only, not valid in JetBrains"
+                errors=$((errors + 1))
+              fi
+            done
+
+            echo "✔ ${name}"
+          done
+
+          if [[ ${errors} -gt 0 ]]; then
+            echo "❌ ${errors} agent validation error(s)"
+            exit 1
+          fi
+
+      - name: Check fixture files match EVALS.md test cases
+        run: |
+          set -euo pipefail
+          missing=0
+
+          check_fixture() {
+            if [[ ! -f "$1" ]]; then
+              echo "MISSING fixture: $1"
+              missing=$((missing + 1))
+            fi
+          }
+
+          check_fixture "evals/fixtures/general/bare_except.py"
+          check_fixture "evals/fixtures/general/eval_usage.py"
+          check_fixture "evals/fixtures/general/no_issues.py"
+          check_fixture "evals/fixtures/general/missing_timeout.py"
+          check_fixture "evals/fixtures/django/n_plus_one.py"
+          check_fixture "evals/fixtures/django/idor_view.py"
+          check_fixture "evals/fixtures/django/migration_not_null.py"
+          check_fixture "evals/fixtures/django/signal_business_logic.py"
+          check_fixture "evals/fixtures/django/debug_settings.py"
+          check_fixture "evals/fixtures/django/csrf_exempt.py"
+          check_fixture "evals/fixtures/react/stale_closure.tsx"
+          check_fixture "evals/fixtures/react/xss_risk.tsx"
+          check_fixture "evals/fixtures/react/missing_abort.tsx"
+          check_fixture "evals/fixtures/react/unstable_key.tsx"
+          check_fixture "evals/fixtures/react/unsafe_assertion.tsx"
+          check_fixture "evals/fixtures/react/no_issues.tsx"
+
+          if [[ ${missing} -gt 0 ]]; then
+            echo "❌ ${missing} fixture(s) missing"
+            exit 1
+          fi
+          echo "✔ All fixtures present"
+
+  # ── 4. VERSION bump check ─────────────────────────────────────────────────────
+  version:
+    name: VERSION bump
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check VERSION bumped when agents or instructions changed
+        run: |
+          set -euo pipefail
+
+          changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "Changed files:"
+          echo "${changed}"
+
+          agent_or_instructions_changed=false
+          version_changed=false
+
+          while IFS= read -r file; do
+            case "${file}" in
+              .github/agents/*.agent.md|instructions/*.md)
+                agent_or_instructions_changed=true ;;
+              VERSION)
+                version_changed=true ;;
+            esac
+          done <<< "${changed}"
+
+          if $agent_or_instructions_changed && ! $version_changed; then
+            echo ""
+            echo "❌ Agent or instruction files changed but VERSION was not bumped."
+            echo "   Update VERSION and add an entry to CHANGELOG.md before merging."
+            exit 1
+          fi
+
+          if $agent_or_instructions_changed && $version_changed; then
+            echo "✔ VERSION bumped alongside agent/instruction changes"
+          else
+            echo "✔ No agent or instruction changes — VERSION bump not required"
+          fi
+
+
