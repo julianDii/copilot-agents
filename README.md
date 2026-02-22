@@ -1,5 +1,9 @@
 # Copilot Agents
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![CI](https://github.com/julianDii/copilot-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/julianDii/copilot-agents/actions/workflows/ci.yml)
+
 A collection of reusable GitHub Copilot agent definitions and global instructions for the full SDLC.
 
 ---
@@ -295,3 +299,13 @@ Each fixture is designed to contain exactly one or two known issues at a known s
 3. **Add prompts:** add examples to `PROMPTS.md` under the relevant section.
 4. **Add fixtures:** for any new agent or checklist item, add a fixture to `evals/fixtures/` and a test case row to `evals/EVALS.md`.
 5. Bump `VERSION` and add an entry to `CHANGELOG.md`.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide, PR checklist, and branch/commit conventions.
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
+To report a security vulnerability, see [SECURITY.md](SECURITY.md).
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 Julian Dobrot
