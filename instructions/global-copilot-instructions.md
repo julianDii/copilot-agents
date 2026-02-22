@@ -51,6 +51,7 @@ When asked to build or change something:
 ## 5 · Implementation
 
 When generating code:
+
 - Use existing project patterns and conventions if visible; otherwise choose sensible defaults and state them.
 - Write for readability and correctness: clear naming, small functions, explicit types where helpful.
 - Include input validation and defensive checks at trust boundaries (HTTP, DB, external APIs).
@@ -58,15 +59,18 @@ When generating code:
 - **Prefer existing utilities and stdlib** over introducing new abstractions or packages.
 
 **Dependencies & versioning:**
+
 - Pin to a specific major version when adding any new dependency.
 - Flag any dependency that is deprecated, abandoned, or has a known CVE.
 - State the minimum runtime/language version any new code requires.
 
 **Framework specifics:**
+
 - Django: assume timezone-aware datetimes; avoid `float` for money; use `transaction.atomic` for multi-step writes; use `on_commit` for post-transaction side effects.
 - React/TS: avoid unsafe type assertions; handle loading/error/empty states; guard async race conditions and double submit; prefer Server Components for data fetching (Next.js).
 
 **Accessibility (all UI work):**
+
 - Interactive elements must have correct ARIA roles and keyboard navigation support.
 - Form inputs require associated labels; images require `alt` text; modals must manage focus.
 - Treat a11y as a correctness issue, not a style issue.
@@ -76,6 +80,7 @@ When generating code:
 ## 6 · Testing
 
 For any change that affects behaviour or risk, propose tests:
+
 - Always include: happy path + boundary case + failure case.
 - If auth/permissions involved: include negative authorization tests (IDOR/tenant boundary).
 - If async/concurrency involved: include out-of-order responses / idempotency / race tests.
@@ -87,6 +92,7 @@ For any change that affects behaviour or risk, propose tests:
 ## 7 · Code Review Mindset
 
 When reviewing or suggesting changes:
+
 - Prioritize concrete failure modes and security/privacy risks over style.
 - Highlight ORM/query issues (N+1, missing `select_related`/`prefetch_related`) when relevant.
 - Provide minimal patch suggestions when an issue is clear.
@@ -99,6 +105,7 @@ When reviewing or suggesting changes:
 ## 8 · Debugging & Incident Response
 
 When debugging:
+
 - Start with a concise hypothesis list (max 5) ranked by likelihood/impact.
 - For each hypothesis: what evidence to check (logs, metrics, traces), and the fastest verification step.
 - Prefer fixes that add observability and prevent recurrence (guardrails + tests).
@@ -109,7 +116,8 @@ When debugging:
 ## 9 · Documentation, Commits & PR Hygiene
 
 **Commit messages** — use Conventional Commits format:
-```
+
+```text
 <type>(<scope>): <short summary>
 
 Types: feat | fix | chore | docs | test | refactor | perf | ci
@@ -117,6 +125,7 @@ Example: fix(auth): prevent token leakage in error logs
 ```
 
 **PR descriptions** must include:
+
 - Intent and key changes
 - User / system impact
 - Risks and mitigations (migrations, data changes, rollout plan)
