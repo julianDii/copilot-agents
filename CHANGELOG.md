@@ -9,6 +9,23 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [2.0.1] — 2026-02-22
+
+### Fixed
+
+- `PROMPTS.md`: MD001 (h3 under h1 → h2), MD036 (bold labels → proper headings),
+  MD031/MD040 (blank lines around fences + `text` language), MD034 (bare URLs → angle-bracket URLs),
+  MD012 (trailing blank lines)
+- `instructions/global-copilot-instructions.md`: MD032 (blank lines around lists),
+  MD031/MD040 (fenced code block language + surrounding blank lines)
+- `README.md`: MD040 (diagram blocks tagged as `text`), MD032 (blank line before lists),
+  MD012 (trailing blank lines)
+- `.markdownlint.json`: restored minimal config — only MD013/MD033/MD041/MD024 disabled
+  (rules genuinely inapplicable to this repo's content)
+- CI lint job now enforces real standards rather than suppressing rules
+
+---
+
 ## [2.0.0] — 2026-02-22
 
 ### Added
