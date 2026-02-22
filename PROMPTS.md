@@ -203,7 +203,68 @@ Produce the standard output: summary → blockers → majors → minors → patc
 
 ---
 
-## Global Instructions — Prompts That Activate Specific Sections
+## Git Agent — `git.agent.md`
+
+Use for commit messages, branch naming, PR descriptions, rebase plans, conflict resolution, and release tagging.
+
+### Generate a commit message from a diff
+
+```text
+Here is my diff: [paste git diff --cached output]
+Generate a Conventional Commits message.
+```
+
+### Generate a commit message from a description
+
+```text
+I added rate limiting to the login endpoint using Django's cache backend.
+Write a Conventional Commits message and a one-paragraph PR body explaining why.
+```
+
+### Generate a branch name
+
+```text
+I'm fixing a bug where JWT tokens are leaked in error logs.
+What should my branch name be?
+```
+
+### Generate a full PR description
+
+```text
+Here is my diff: [paste git diff main...HEAD]
+Generate a PR description with: intent, key changes, impact, risks, how-to-test steps, and rollback plan.
+```
+
+### Clean up commit history before merging
+
+```text
+Here is my git log: [paste git log --oneline output]
+I want to squash the WIP commits and reword the others before opening a PR.
+Give me a rebase plan.
+```
+
+### Explain and resolve a merge conflict
+
+```text
+Here is my conflict block: [paste <<<< ==== >>>> block]
+Explain what each side changed and recommend the correct resolution.
+```
+
+### Recommend a version bump
+
+```text
+Here is my CHANGELOG for this release: [paste entries]
+Should this be a patch, minor, or major bump? What should the tag command be?
+```
+
+### Audit a PR for unrelated changes
+
+```text
+Here is my diff: [paste diff]
+Are there any unrelated changes mixed in that should be split into a separate PR?
+```
+
+---
 
 These work in any context without attaching an agent file — the global instructions are always active.
 
@@ -329,3 +390,15 @@ Links that informed the agents — useful when going deeper on a finding.
 | Common RTL Mistakes | <https://kentcdodds.com/blog/common-mistakes-with-react-testing-library> |
 | WCAG 2.1 Quick Reference | <https://www.w3.org/WAI/WCAG21/quickref/> |
 | ARIA Authoring Practices | <https://www.w3.org/WAI/ARIA/apg/patterns/> |
+
+### Git
+
+| Topic | URL |
+|-------|-----|
+| Conventional Commits spec | <https://www.conventionalcommits.org/en/v1.0.0/> |
+| Pro Git book | <https://git-scm.com/book/en/v2> |
+| Interactive rebase guide | <https://git-scm.com/docs/git-rebase> |
+| GitHub Flow | <https://docs.github.com/en/get-started/using-github/github-flow> |
+| Trunk-Based Development | <https://trunkbaseddevelopment.com/> |
+| Semantic Versioning | <https://semver.org/> |
+| git-bisect guide | <https://git-scm.com/docs/git-bisect> |

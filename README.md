@@ -157,6 +157,7 @@ The 9 sections in `global-copilot-instructions.md` shape Copilot's behaviour acr
 | `code-review.agent.md` | General code review — quality, security, performance, testing. |
 | `django-review.agent.md` | Django review — models, views, ORM, security, best practices. |
 | `react-ts-review.agent.md` | React + TypeScript review — components, hooks, type safety, a11y. |
+| `git.agent.md` | Git workflow — commit messages, branch strategy, history clean-up, conflict resolution, PR hygiene. |
 
 ### How to use agents
 
