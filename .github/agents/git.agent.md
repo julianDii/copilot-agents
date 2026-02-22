@@ -432,8 +432,18 @@ Suggest creating `.gitmessage` in the repo root:
 Then activate it:
 
 ```bash
-git config --global commit.template .gitmessage
+# Option 1 (recommended): local to this repo only — safe, no cross-repo breakage
+git config --local commit.template .gitmessage
+
+# Option 2: global with an absolute path — works across repos but file must exist
+# Replace with the actual absolute path on your machine
+git config --global commit.template ~/.gitmessage
+# Then move the file: mv .gitmessage ~/.gitmessage
 ```
+
+> ⚠️ Never set `commit.template` globally to a relative path like `.gitmessage` —
+> git will abort with `fatal: could not read .gitmessage` in any repo that does not
+> contain that file.
 
 #### `.gitignore` hygiene
 
