@@ -346,9 +346,12 @@ Check for recommended settings and flag missing ones:
 #### 7. Secrets scan (basic)
 
 ```bash
-git log -p --all --follow -- '*.env' '*.key' '*.pem' 2>/dev/null | head -50
-git grep -r "password\s*=" -- ':!*.md' 2>/dev/null | head -20
-git grep -r "secret\s*=" -- ':!*.md' 2>/dev/null | head -20
+# --follow requires exactly one path — run separately per extension
+git log -p --all --follow -- '*.env' 2>/dev/null | head -50
+git log -p --all --follow -- '*.key' 2>/dev/null | head -50
+git log -p --all --follow -- '*.pem' 2>/dev/null | head -50
+git grep -r 'password=' -- ':!*.md' 2>/dev/null | head -20
+git grep -r 'secret=' -- ':!*.md' 2>/dev/null | head -20
 ```
 
 - ❌ Any match → flag immediately with file + line. Recommend `git filter-repo` to purge and a
