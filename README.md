@@ -158,6 +158,7 @@ The 9 sections in `global-copilot-instructions.md` shape Copilot's behaviour acr
 | `django-review.agent.md` | Django review — models, views, ORM, security, best practices. |
 | `react-ts-review.agent.md` | React + TypeScript review — components, hooks, type safety, a11y. |
 | `git.agent.md` | Git workflow — commit messages, branch strategy, history clean-up, conflict resolution, PR hygiene. |
+| `jira.agent.md` | Jira workflow — turn tickets into branch names, commit messages, PR descriptions, implementation plans, and test stubs. |
 
 ### How to use agents
 

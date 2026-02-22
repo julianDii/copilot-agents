@@ -9,6 +9,16 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [2.2.0] — 2026-02-22
+
+### Added
+
+- `jira.agent.md` — Jira workflow agent: turns Jira tickets into branch names, commit messages,
+  PR descriptions, implementation plans, and test stubs. Supports Story, Bug, Task, Sub-task,
+  and Epic types. Maps all Jira fields to Conventional Commits artefacts.
+
+---
+
 ## [2.1.0] — 2026-02-22
 
 ### Added
