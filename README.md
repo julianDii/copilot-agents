@@ -93,7 +93,7 @@ Installs into the target project:
 
 ## Repo Structure
 
-```
+```text
 copilot-agents/
 │
 ├── .github/

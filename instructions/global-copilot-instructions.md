@@ -40,6 +40,7 @@ These instructions apply to all Copilot interactions globally across every proje
 ## 4 · Requirements & Design
 
 When asked to build or change something:
+
 - First produce a short "Assumptions & Open Questions" list (max 5).
 - Then propose a plan with milestones that lead to a shippable increment.
 - Identify risks (security, data integrity, migrations, performance, rollout) and how to mitigate them.
