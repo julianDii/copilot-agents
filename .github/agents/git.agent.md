@@ -110,6 +110,7 @@ Standard autonomous workflow:
 | `pr` | Generates full PR description from `git diff main...HEAD` |
 | `tag <version>` | Validates VERSION/CHANGELOG → `git tag -a v<version>` → `git push origin v<version>` |
 | `open pr` | Prints the GitHub PR URL for the current branch |
+| `health` | Runs a full repo health check — see section below |
 
 ---
 
@@ -145,7 +146,125 @@ If the user doesn't specify a branch name, infer it from the staged diff or thei
 
 ---
 
-### Suggested configurations (offer these proactively)
+### Repo health check (`health`)
+
+When the user types `health`, run all of the following checks in sequence and produce a structured
+report with ✅ / ⚠️ / ❌ per item. Propose a fix for every ⚠️ and ❌.
+
+#### 1. Remote & sync
+
+```bash
+git remote -v                          # remote configured?
+git fetch origin
+git status -sb                         # ahead/behind origin?
+git branch -vv                         # tracking branch set?
+```
+
+- ❌ No remote configured → `git remote add origin <url>`
+- ⚠️ Branch has no upstream → `git push -u origin HEAD`
+- ⚠️ Behind origin → recommend `git pull --rebase`
+- ⚠️ Ahead of origin by >5 commits → recommend pushing or opening a PR
+
+#### 2. Branch hygiene
+
+```bash
+git branch --merged main               # stale merged branches
+git for-each-ref --sort=-committerdate refs/heads \
+  --format='%(refname:short) %(committerdate:relative)'
+```
+
+- ⚠️ Merged branches not deleted → `git branch -d <branch>` for each
+- ⚠️ Branches not touched in >2 weeks → flag as stale, suggest pruning
+- ⚠️ Currently on `main`/`master` with uncommitted changes → recommend branching first
+
+#### 3. Working tree
+
+```bash
+git status --porcelain
+git stash list
+```
+
+- ⚠️ Untracked files that look like secrets (`.env`, `*.key`, `*.pem`) → add to `.gitignore`
+  immediately + `git rm --cached` if already tracked
+- ⚠️ Large untracked files (>1 MB) → ask if they should be in `.gitignore` or Git LFS
+- ⚠️ Stashes older than 3 days → list them and ask if they can be dropped or applied
+
+#### 4. `.gitignore` coverage
+
+Check that the following are ignored — flag any that are tracked:
+
+| Category | Patterns |
+|----------|----------|
+| OS | `.DS_Store`, `Thumbs.db`, `desktop.ini` |
+| Editors | `.idea/`, `.vscode/`, `*.swp`, `*.swo`, `*~` |
+| Secrets | `.env`, `.env.*`, `*.pem`, `*.key`, `*.p12`, `credentials.json` |
+| Build | `dist/`, `build/`, `out/`, `target/` |
+| Python | `__pycache__/`, `*.pyc`, `.venv/`, `*.egg-info/` |
+| Node | `node_modules/`, `.npm/` |
+| Coverage | `.coverage`, `coverage/`, `htmlcov/`, `.nyc_output/` |
+
+#### 5. Commit hygiene
+
+```bash
+git log --oneline -20
+```
+
+- ⚠️ Commits with messages like `wip`, `fix`, `asdf`, `test`, `.` → recommend squashing before merge
+- ⚠️ Commits that mix unrelated concerns (large diff touching many unrelated files) → recommend splitting
+- ⚠️ Merge commits on a feature branch → recommend `git rebase origin/main` instead
+
+#### 6. Git config
+
+```bash
+git config --list --local
+git config --list --global
+```
+
+Check for recommended settings and flag missing ones:
+
+| Setting | Recommended value | Why |
+|---------|-------------------|-----|
+| `user.name` | set | Required for commits |
+| `user.email` | set | Required for commits |
+| `init.defaultBranch` | `main` | Consistent default |
+| `pull.rebase` | `true` | Avoids noisy merge commits |
+| `fetch.prune` | `true` | Cleans up deleted remote branches |
+| `rebase.autoStash` | `true` | Prevents rebase failures on dirty tree |
+| `core.autocrlf` | `input` (macOS/Linux) | Prevents line-ending noise |
+
+#### 7. Secrets scan (basic)
+
+```bash
+git log -p --all --follow -- '*.env' '*.key' '*.pem' 2>/dev/null | head -50
+git grep -r "password\s*=" -- ':!*.md' 2>/dev/null | head -20
+git grep -r "secret\s*=" -- ':!*.md' 2>/dev/null | head -20
+```
+
+- ❌ Any match → flag immediately with file + line. Recommend `git filter-repo` to purge and a
+  credential rotation. Never show the secret value in the report.
+
+#### Health report output format
+
+```text
+## Repo Health Report — <repo> (<branch>) — <date>
+
+### Remote & sync      ✅ / ⚠️ / ❌
+### Branch hygiene     ✅ / ⚠️ / ❌
+### Working tree       ✅ / ⚠️ / ❌
+### .gitignore         ✅ / ⚠️ / ❌
+### Commit hygiene     ✅ / ⚠️ / ❌
+### Git config         ✅ / ⚠️ / ❌
+### Secrets scan       ✅ / ⚠️ / ❌
+
+---
+Issues found: X
+Fixes required (❌): X
+Warnings (⚠️): X
+
+<for each issue: what it is, why it matters, exact fix command>
+```
+
+---
 
 When a user sets up the repo or asks for recommendations, suggest:
 
