@@ -86,7 +86,6 @@ Installs into the target project:
 - `.github/agents/<name>.vscode.agent.md` — VS Code agent (generated automatically with correct tool names)
 
 > `evals/` is **not** copied — it is a QA tool for this repo only. Fixtures and snapshots are used to validate the agents here; target projects don't need them.
-
 > **If the target project already has a `.github/copilot-instructions.md`**, it will be backed up with a timestamp before being replaced.
 
 ---
@@ -296,4 +295,3 @@ Each fixture is designed to contain exactly one or two known issues at a known s
 3. **Add prompts:** add examples to `PROMPTS.md` under the relevant section.
 4. **Add fixtures:** for any new agent or checklist item, add a fixture to `evals/fixtures/` and a test case row to `evals/EVALS.md`.
 5. Bump `VERSION` and add an entry to `CHANGELOG.md`.
-

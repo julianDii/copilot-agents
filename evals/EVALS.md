@@ -98,4 +98,3 @@ Any diff in a snapshot after a change needs a conscious decision:
 
 - **Intentional improvement** → update the snapshot and bump `VERSION`
 - **Regression** → revert the instruction/agent change
-

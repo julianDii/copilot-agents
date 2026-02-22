@@ -91,4 +91,3 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 - `instructions/global-copilot-instructions.md` — 9-section global instruction file
 - `README.md` — setup and usage documentation
 - `VERSION`
-
