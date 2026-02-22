@@ -9,6 +9,17 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [2.1.0] — 2026-02-22
+
+### Added
+
+- `git.agent.md` — Git workflow agent: commit messages, branch strategy, rebase/merge, history
+  clean-up, conflict resolution, and PR hygiene using Conventional Commits.
+- `PROMPTS.md`: git agent section with 8 ready-to-use prompts and Git reference links.
+- `README.md`: git agent entry in the Agents table.
+
+---
+
 ## [2.0.1] — 2026-02-22
 
 ### Fixed
