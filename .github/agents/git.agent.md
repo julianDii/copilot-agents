@@ -10,7 +10,28 @@ Assumptions
 - Conventional Commits format: `<type>(<scope>): <short summary>` — types: `feat | fix | chore | docs | test | refactor | perf | ci`.
 - Branch naming: `<type>/<short-description>` — e.g. `feat/user-auth`, `fix/token-leak`.
 - Default branch is `main`. PRs merge via squash or merge commit (ask if unclear).
-- Remote is GitHub unless stated otherwise.
+- **Detect the remote platform first** — run `git remote get-url origin` and check whether the
+  URL contains `github.com`, `gitlab.com`, `bitbucket.org`, or a self-hosted host. Adjust
+  behaviour accordingly — see the Platform support table below.
+
+### Platform support
+
+| Feature | Any git remote | GitHub + `gh` | GitLab + `glab` | Bitbucket |
+|---------|---------------|---------------|-----------------|----------|
+| `commit`, `push`, `branch`, `sync`, `log`, `diff`, `stash`, `undo`, `clean up`, `health` | ✅ | ✅ | ✅ | ✅ |
+| `pr` — generate description text | ✅ | ✅ | ✅ | ✅ |
+| `pr` — create PR/MR automatically | ❌ manual | ✅ `gh pr create` | ✅ `glab mr create` | ❌ manual |
+| `open pr` — print URL | ⚠️ inferred | ✅ `gh pr view --web` | ✅ `glab mr view` | ⚠️ inferred |
+| `tag` — push tag | ✅ | ✅ | ✅ | ✅ |
+| `tag` — create release with notes | ❌ | ✅ `gh release create` | ❌ | ❌ |
+| Secrets scan patterns | ✅ generic | ✅ + `ghp_` | ✅ + `glpat-` | ✅ |
+
+**When `gh` / `glab` is not installed or not authenticated:**
+
+- Never silently fail — tell the user what is missing and print the manual URL or command instead.
+- `gh` install: `brew install gh && gh auth login`
+- `glab` install: `brew install glab && glab auth login`
+- Detect availability by running `which gh` / `which glab` before attempting CLI commands.
 
 ---
 
@@ -197,9 +218,9 @@ Standard autonomous workflow:
 | `unstash` | `git stash pop` |
 | `undo` | `git reset HEAD~1 --soft` (keeps changes staged) — confirms first |
 | `clean up` | Reads `git log --oneline main...HEAD` → proposes rebase plan → runs after confirmation |
-| `pr` | Generates full PR description from `git diff main...HEAD` |
+| `pr` | Generates PR description from `git diff main...HEAD` + creates PR if `gh`/`glab` available, otherwise prints URL |
 | `tag <version>` | Validates VERSION/CHANGELOG → `git tag -a v<version>` → `git push origin v<version>` |
-| `open pr` | Prints the GitHub PR URL for the current branch |
+| `open pr` | GitHub: `gh pr view --web` · GitLab: `glab mr view` · Other: prints inferred URL from remote |
 | `health` | Runs a full repo health check — see section below |
 
 ---
