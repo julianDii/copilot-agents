@@ -32,11 +32,9 @@ Apply to every agent run:
 | 7 | **Patch quality** | Suggested patches are minimal and correct — not broad refactors |
 | 8 | **Test proposals** | Proposed tests are concrete (input → expected behaviour), not generic |
 
-**Score: 7–8 = passing | 5–6 = needs attention | &lt;5 = regression**
+Score: **7–8 = passing** | **5–6 = needs attention** | **&lt;5 = regression**
 
 ---
-
-## Test cases
 
 ### `code-review` agent
 
@@ -100,4 +98,3 @@ Any diff in a snapshot after a change needs a conscious decision:
 
 - **Intentional improvement** → update the snapshot and bump `VERSION`
 - **Regression** → revert the instruction/agent change
-

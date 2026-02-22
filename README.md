@@ -8,7 +8,7 @@ A collection of reusable GitHub Copilot agent definitions and global instruction
 
 All instructions live in **one file**:
 
-```
+```text
 instructions/global-copilot-instructions.md
 ```
 
@@ -18,7 +18,7 @@ Edit that file when you want to change your instructions. Then run the sync scri
 
 ## How Instructions Get to Copilot
 
-```
+```text
 instructions/global-copilot-instructions.md   ← EDIT THIS
         │
         ├─ ./scripts/sync-agents.sh --global
@@ -80,19 +80,19 @@ To give a specific project its own copy of the instructions — useful for teamm
 ```
 
 Installs into the target project:
+
 - `.github/copilot-instructions.md` — picked up automatically by Copilot in any IDE when that repo is open
 - `.github/agents/<name>.agent.md` — JetBrains agent (picked up automatically)
 - `.github/agents/<name>.vscode.agent.md` — VS Code agent (generated automatically with correct tool names)
 
 > `evals/` is **not** copied — it is a QA tool for this repo only. Fixtures and snapshots are used to validate the agents here; target projects don't need them.
-
 > **If the target project already has a `.github/copilot-instructions.md`**, it will be backed up with a timestamp before being replaced.
 
 ---
 
 ## Repo Structure
 
-```
+```text
 copilot-agents/
 │
 ├── .github/
@@ -219,7 +219,7 @@ git diff --cached
 
 ### How the dual-variant approach works
 
-```
+```text
 .github/agents/code-review.agent.md          ← source (JetBrains tool names)
         │
         └─ sync-agents.sh <target>
@@ -277,6 +277,7 @@ Write agents using JetBrains tool names — the sync script handles VS Code conv
 Use the fixtures and rubric in **[evals/EVALS.md](evals/EVALS.md)** to verify agents are working correctly and to catch regressions after any change.
 
 **Quick start:**
+
 1. Select an agent from the Copilot Chat dropdown
 2. Attach a fixture file from `evals/fixtures/` with `#`
 3. Type `Review this file.`
@@ -294,4 +295,3 @@ Each fixture is designed to contain exactly one or two known issues at a known s
 3. **Add prompts:** add examples to `PROMPTS.md` under the relevant section.
 4. **Add fixtures:** for any new agent or checklist item, add a fixture to `evals/fixtures/` and a test case row to `evals/EVALS.md`.
 5. Bump `VERSION` and add an entry to `CHANGELOG.md`.
-
