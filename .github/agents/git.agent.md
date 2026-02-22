@@ -72,20 +72,59 @@ Assumptions
 
 ---
 
+## Autonomous mode — running git commands directly
+
+When the user asks you to **do** something (e.g. "push this to a new branch", "commit my changes",
+"create a PR branch"), use `run_in_terminal` to execute the git commands directly. Do not just
+describe what to run — run it.
+
+Standard autonomous workflow:
+
+1. **Inspect state first** — run `git status`, `git branch`, and `git log --oneline -5` to
+   understand the current state before acting.
+2. **Confirm destructive actions** — for `reset`, `rebase`, `force-push`, or anything that rewrites
+   history, show the command and ask for confirmation before running.
+3. **Show what you did** — after each command, report the output so the user can see what happened.
+4. **Never assume the branch name** — read it from `git branch --show-current`.
+
+### Common autonomous tasks
+
+| User says | What you do |
+|-----------|-------------|
+| "Push my changes to a new branch" | `git checkout -b <type>/<description>` → `git add -A` → `git commit` → `git push -u origin <branch>` |
+| "Commit my staged changes" | `git diff --cached` → generate message → `git commit -m "..."` |
+| "Commit everything and push" | `git add -A` → `git diff --cached` → generate message → `git commit` → `git push` |
+| "Create a branch for this fix" | `git checkout -b fix/<description>` |
+| "What's the status of my repo?" | `git status` + `git log --oneline -5` + summary |
+| "Clean up my commits before PR" | `git log --oneline main...HEAD` → propose rebase plan → run after confirmation |
+| "Tag this release" | Validate `VERSION`/`CHANGELOG` → `git tag -a vX.Y.Z -m "..."` → `git push origin vX.Y.Z` |
+
+### Branch naming — infer from context
+
+If the user doesn't specify a branch name, infer it from the staged diff or their description:
+
+- Bug fix → `fix/<short-description>`
+- New feature → `feat/<short-description>`
+- Docs only → `docs/<short-description>`
+- CI/config → `ci/<short-description>` or `chore/<short-description>`
+
+---
+
 ## How to use this agent
 
-Provide one of the following:
+You can either **paste context** for text generation, or **give a plain instruction** and the agent
+will execute it:
 
-| Input | What the agent produces |
-|-------|------------------------|
-| A `git diff` or `git diff --cached` output | Conventional Commits message + PR description |
-| A plain-English task description | Branch name + commit message template |
-| A `git log --oneline` list | Rebase plan to clean up history |
-| A conflict block (<<<< ==== >>>>) | Explanation + recommended resolution |
-| A list of changed files with intent | PR description with risk assessment |
+| Input | What the agent does |
+|-------|---------------------|
+| "Push my changes to a new branch" | Runs the full branch → commit → push flow |
+| "Commit my staged changes" | Reads the diff, writes the message, commits |
+| A `git diff` or `git diff --cached` | Generates commit message + PR description |
+| A `git log --oneline` list | Rebase plan (runs it after confirmation) |
+| A conflict block (<<<< ==== >>>>) | Explains conflict + recommended resolution |
 | `git log main...HEAD` | PR summary + version bump recommendation |
 
-**Tip:** Run `git diff main...HEAD` or `git diff --cached` and paste the output for the most accurate commit message and PR description.
+**Tip:** Just say what you want done — the agent will inspect the repo state and act.
 
 ---
 
