@@ -43,19 +43,23 @@ mcp_jira_get_project(project_key="PROJ")
 1. Install the Jira MCP server:
 
    ```bash
-   npm install -g @modelcontextprotocol/server-jira
+   npm install -g @rokealvo/jira-mcp@1.4.0
    ```
 
-2. Add to your MCP config (`~/.cursor/mcp.json`, `~/.vscode/mcp.json`, or IDE settings):
+2. Generate a Jira API token at: <https://id.atlassian.com/manage-profile/security/api-tokens>
+
+3. Add to your MCP config for your IDE:
+
+   **VS Code** — `~/.vscode/mcp.json`:
 
    ```json
    {
      "mcpServers": {
        "jira": {
-         "command": "mcp-server-jira",
+         "command": "jira-mcp",
          "env": {
            "JIRA_URL": "https://your-org.atlassian.net",
-           "JIRA_EMAIL": "you@example.com",
+           "JIRA_USERNAME": "you@example.com",
            "JIRA_API_TOKEN": "<your-api-token>"
          }
        }
@@ -63,11 +67,25 @@ mcp_jira_get_project(project_key="PROJ")
    }
    ```
 
-3. Generate an API token at: <https://id.atlassian.com/manage-profile/security/api-tokens>
+   **JetBrains (IntelliJ / PyCharm / WebStorm)** — Settings → Tools → AI Assistant → Model Context Protocol → Add Server:
+
+   ```json
+   {
+     "name": "jira",
+     "command": "jira-mcp",
+     "env": {
+       "JIRA_URL": "https://your-org.atlassian.net",
+       "JIRA_USERNAME": "you@example.com",
+       "JIRA_API_TOKEN": "<your-api-token>"
+     }
+   }
+   ```
+
 4. Restart the IDE / reload the MCP server.
 
 > ⚠️ Never commit `JIRA_API_TOKEN` or any credentials to a repository.
-> Use environment variables or a secrets manager — never hardcode them in config files.
+> Store secrets in environment variables or a secrets manager (e.g. `~/.zshrc` exports,
+> 1Password CLI, Doppler) — never hardcode them in config files checked into git.
 
 ### Paste mode (fallback when MCP is unavailable)
 
