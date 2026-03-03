@@ -186,9 +186,11 @@ The agent fetches the ticket directly and produces:
 | Implementation plan | Numbered tasks, each ≤ half a day, with dependency flags |
 | Test stubs | Happy path + edge case + failure for every AC |
 
-> **Setup:** `npm install -g @rokealvo/jira-mcp@1.4.0` then add your Jira URL and API token
-> to your IDE MCP config. See [`.github/agents/jira.agent.md`](.github/agents/jira.agent.md)
-> for full VS Code and JetBrains setup instructions.
+> **Setup:** Configure Atlassian Rovo MCP in your IDE.
+> Recommended endpoint: `https://mcp.atlassian.com/v1/mcp` (HTTP transport, OAuth flow).
+> Compatibility fallback: `mcp-remote` with `https://mcp.atlassian.com/v1/sse`.
+> See [`.github/agents/jira.agent.md`](.github/agents/jira.agent.md) for full VS Code and
+> JetBrains setup instructions.
 
 #### Without MCP — paste mode fallback
 

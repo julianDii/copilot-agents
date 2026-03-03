@@ -40,52 +40,57 @@ mcp_jira_get_project(project_key="PROJ")
 
 **MCP setup** (if not yet configured — tell the user these steps):
 
-1. Install the Jira MCP server:
+1. Add Atlassian Rovo MCP server config in your IDE.
 
-   ```bash
-   npm install -g @rokealvo/jira-mcp@1.4.0
-   ```
+2. Use the recommended HTTP setup (`/v1/mcp`) where supported:
 
-2. Generate a Jira API token at: <https://id.atlassian.com/manage-profile/security/api-tokens>
-
-3. Add to your MCP config for your IDE:
-
-   **VS Code** — `~/.vscode/mcp.json`:
+   **VS Code** — user `mcp.json`:
 
    ```json
    {
-     "mcpServers": {
-       "jira": {
-         "command": "jira-mcp",
-         "env": {
-           "JIRA_URL": "https://your-org.atlassian.net",
-           "JIRA_USERNAME": "you@example.com",
-           "JIRA_API_TOKEN": "<your-api-token>"
-         }
+     "servers": {
+       "atlassian-rovo-mcp": {
+         "type": "http",
+         "url": "https://mcp.atlassian.com/v1/mcp"
        }
      }
    }
    ```
 
-   **JetBrains (IntelliJ / PyCharm / WebStorm)** — Settings → Tools → AI Assistant → Model Context Protocol → Add Server:
+   **JetBrains (IntelliJ / PyCharm / WebStorm)** — Settings → Tools → AI Assistant → Model Context Protocol:
 
    ```json
    {
-     "name": "jira",
-     "command": "jira-mcp",
-     "env": {
-       "JIRA_URL": "https://your-org.atlassian.net",
-       "JIRA_USERNAME": "you@example.com",
-       "JIRA_API_TOKEN": "<your-api-token>"
+     "servers": {
+       "atlassian-rovo-mcp": {
+         "type": "http",
+         "url": "https://mcp.atlassian.com/v1/mcp"
+       }
      }
    }
    ```
 
-4. Restart the IDE / reload the MCP server.
+3. If your client does not support native HTTP MCP yet, use `mcp-remote` with the SSE endpoint (`/v1/sse`):
 
-> ⚠️ Never commit `JIRA_API_TOKEN` or any credentials to a repository.
-> Store secrets in environment variables or a secrets manager (e.g. `~/.zshrc` exports,
-> 1Password CLI, Doppler) — never hardcode them in config files checked into git.
+   ```json
+   {
+     "servers": {
+       "atlassian-rovo-mcp": {
+         "type": "stdio",
+         "command": "mcp-remote",
+         "args": [
+           "https://mcp.atlassian.com/v1/sse"
+         ]
+       }
+     }
+   }
+   ```
+
+4. Restart the IDE / reload MCP servers, then verify by asking for a known issue key (for example `PROJ-123`).
+
+> ⚠️ Never commit tokens or credentials to a repository.
+> If you use additional MCP servers that require API keys, store secrets in environment
+> variables or a secrets manager and rotate immediately if leaked.
 
 ### Paste mode (fallback when MCP is unavailable)
 
