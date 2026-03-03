@@ -203,6 +203,59 @@ Produce the standard output: summary → blockers → majors → minors → patc
 
 ---
 
+## Jira Agent — `jira.agent.md`
+
+Use for turning Jira issues into branch names, commit messages, PR descriptions, implementation plans, and AC-based test stubs.
+
+### MCP mode (issue key only)
+
+```text
+EVT-5508
+
+Generate: branch name, commit message, PR title/body, implementation plan, and test stubs.
+```
+
+### MCP mode (specific output only)
+
+```text
+Give me only the branch name and Conventional Commit message for EVT-5508.
+```
+
+### Paste mode fallback (when MCP is unavailable)
+
+```text
+Ticket:
+Key: EVT-5508
+Type: Story
+Priority: P4 - Medium
+Summary: [paste summary]
+Description: [paste description]
+Acceptance criteria: [paste ACs]
+Story points: 3
+Linked issues: [paste]
+
+Generate branch name, commit message, PR description, implementation plan, and test stubs.
+```
+
+### Bug triage
+
+```text
+For BUG-123, produce:
+1) ranked root-cause hypotheses,
+2) evidence to collect for each,
+3) minimal safe fix plan,
+4) regression tests that would have caught it.
+```
+
+### Epic breakdown
+
+```text
+Break down epic EVT-5401 into implementation-ready stories.
+Each story must be <= 8 points, include dependencies, and include acceptance criteria.
+```
+
+---
+
 ## Git Agent — `git.agent.md`
 
 Use for commit messages, branch naming, PR descriptions, rebase plans, conflict resolution, and release tagging.

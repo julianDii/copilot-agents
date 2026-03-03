@@ -158,6 +158,60 @@ The 9 sections in `global-copilot-instructions.md` shape Copilot's behaviour acr
 | `django-review.agent.md` | Django review — models, views, ORM, security, best practices. |
 | `react-ts-review.agent.md` | React + TypeScript review — components, hooks, type safety, a11y. |
 | `git.agent.md` | Git workflow — commit messages, branch strategy, history clean-up, conflict resolution, PR hygiene. |
+| `jira.agent.md` | Jira workflow — turn tickets into branch names, commit messages, PR descriptions, implementation plans, and test stubs. |
+
+---
+
+### Jira agent — from ticket to code in seconds
+
+The Jira agent eliminates the manual translation between a ticket and your development workflow.
+Instead of context-switching between Jira and your IDE, you type an issue key and get everything
+you need to start coding.
+
+#### With MCP (recommended) — no copy/paste needed
+
+When a Jira MCP server is configured, just type the issue key:
+
+```text
+PROJ-123
+```
+
+The agent fetches the ticket directly and produces:
+
+| Artefact | Example |
+|---------|---------|
+| Branch name | `fix/PROJ-123-prevent-double-charge` |
+| Commit message | `fix(PROJ-123): prevent double charge on payment retry` |
+| PR description | Full intent, Jira metadata, ACs as test steps, risks, rollback |
+| Implementation plan | Numbered tasks, each ≤ half a day, with dependency flags |
+| Test stubs | Happy path + edge case + failure for every AC |
+
+> **Setup:** Configure Atlassian Rovo MCP in your IDE.
+> Recommended endpoint: `https://mcp.atlassian.com/v1/mcp` (HTTP transport, OAuth flow).
+> Compatibility fallback: `mcp-remote` with `https://mcp.atlassian.com/v1/sse`.
+> See [`.github/agents/jira.agent.md`](.github/agents/jira.agent.md) for full VS Code and
+> JetBrains setup instructions.
+
+#### Without MCP — paste mode fallback
+
+If MCP is not configured, paste the ticket text and state what you need:
+
+```text
+[paste ticket title, type, priority, description, ACs, story points]
+
+Give me the branch, commit, and implementation plan.
+```
+
+#### Built-in guardrails
+
+| Situation | What the agent does |
+|-----------|-------------------|
+| No acceptance criteria | `⚠️ No ACs found — ask the PM before starting` |
+| Linked blocking issue | `⚠️ BLOCKED BY PROJ-400` at top of implementation plan |
+| Story points > 8 | `⚠️ Too large — consider splitting before the sprint` |
+| Assignee in ticket | Stripped — never included in commits or PR descriptions |
+
+---
 
 ### How to use agents
 
