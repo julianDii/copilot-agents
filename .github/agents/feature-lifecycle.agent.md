@@ -184,9 +184,20 @@ When creating the flow metrics table, you MUST use size-based targets for lead t
 ```
 **Story size**: 24 subtasks = ~8-13 story points (large, 17-24 subtask range)
 
-| **Lead time** | 39 working days (67 calendar) | < 21-28 working days | 🟡 1.4× target |
-| **Cycle time** | 23 working days (44 calendar) | < 14-21 working days | 🟡 1.1× target |
+| Metric | Value | Target (working days) | Assessment |
+|--------|-------|--------|------------|
+| **Lead time** (created → RELEASED) | 39 working days (67 calendar) | < 21-28 working days | 🟡 1.4× target |
+| **Cycle time** (first dev → resolved) | 23 working days (44 calendar) | < 14-21 working days | 🟡 1.1× target |
+| **Refinement-to-start lag** | 11 working days (15 calendar) | < 4 working days | 🔴 2.75× target |
+| **Testing density** | 0 defects / 24 subtasks = 0 | < 0.5 | 🟢 excellent |
+| **Rework ratio** | 0 fix subtasks / 24 = 0% | < 15% | 🟢 excellent |
+| **Batch size** | 24 subtasks | 5–13 | 🟡 above range (but parallelized well) |
 ```
+
+**CRITICAL**: The metric column MUST use precise definitions:
+- Lead time: `(created → RELEASED)` NOT `(created → resolved)`
+- Cycle time: `(first dev → resolved)` or `(first dev → last resolved)`
+- Always include the date/milestone names in parentheses for clarity
 
 **Important**: The target shown in the flow metrics table MUST use the size-based target from the "Lead time targets by story points" table below, NOT the constant 7-day target. Determine the story size first (subtask count), then apply the appropriate target range.
 
@@ -447,7 +458,24 @@ Produce a comprehensive analysis in this structure:
 <ASCII timeline diagram with calendar AND working days>
 
 ## 📊 Flow metrics
-<flow metrics table with size-based targets>
+
+**Story size**: [X] subtasks = ~[Y-Z] story points ([small/medium/large], [range] subtask range)
+
+| Metric | Value | Target (working days) | Assessment |
+|--------|-------|--------|------------|
+| **Lead time** (created → RELEASED) | X working days (Y calendar) | < [size-based target] working days | 🟢🟡🔴 [ratio]× target |
+| **Cycle time** (first dev → resolved) | X working days (Y calendar) | < [size-based target] working days | 🟢🟡🔴 [ratio]× target |
+| **Refinement-to-start lag** | X working days (Y calendar) | < 4 working days | 🟢🟡🔴 [ratio]× target |
+| **Testing density** | X defects / Y subtasks = Z | < 0.5 | 🟢🟡🔴 |
+| **Rework ratio** | X fix subtasks / Y = Z% | < 15% | 🟢🟡🔴 |
+| **Batch size** | X subtasks | 5–13 | 🟢🟡🔴 |
+| **Schedule variance** | X days | ≤ 0 days | 🟢🟡🔴 |
+| **Internal→Release lag** | X working days | < 4 working days | 🟢🟡🔴 |
+
+**IMPORTANT**: 
+- Lead time MUST show `(created → RELEASED)` NOT `(created → resolved)`
+- If RELEASED date unavailable, use `(created → resolved)` with warning: "⚠️ Using resolved date; lead time may be understated"
+- Always include working AND calendar days for transparency
 
 ## 👥 Team workload distribution
 <team table with subtask breakdown>

@@ -9,6 +9,20 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [2.2.1] — 2026-03-05
+
+### Fixed
+
+- `feature-lifecycle.agent.md` — Enhanced flow metrics table examples to explicitly show
+  `(created → RELEASED)` format in metric column headers, preventing confusion with deprecated
+  `(created → resolved)` pattern. Added CRITICAL note emphasizing RELEASED vs resolved distinction.
+- Lifecycle analyses: Fixed lead time metric in 6 existing analyses (EVT-4230, EVT-4521, EVT-4640,
+  EVT-4924, EVT-4984, EVT-5214) to use `created → RELEASED` instead of `created → resolved`.
+- Added comprehensive flow metrics table template in output format section with explicit column
+  headers and IMPORTANT note for future consistency.
+
+---
+
 ## [2.2.0] — 2026-03-05
 
 ### Added
