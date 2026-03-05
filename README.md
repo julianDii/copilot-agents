@@ -41,7 +41,7 @@ instructions/global-copilot-instructions.md   ← EDIT THIS
 
 ## Setup on a New Machine
 
-### JetBrains
+### JetBrains IDEs (IntelliJ IDEA, PyCharm, WebStorm, etc.)
 
 ```bash
 git clone <this-repo>
@@ -60,10 +60,19 @@ Restart your JetBrains IDE after running the script.
 
 ### VS Code
 
-VS Code instructions are workspace-scoped. The `.vscode/settings.json` in this repo already points to `instructions/global-copilot-instructions.md`, so instructions are active automatically when you open this repo.
+**Option 1: Workspace-scoped (this repo only)**
 
-For global VS Code instructions (all projects), go to:
-**Settings → search `codeGeneration.instructions` → add** `{ "file": "<absolute-path>/instructions/global-copilot-instructions.md" }`.
+The `.vscode/settings.json` in this repo already points to `instructions/global-copilot-instructions.md`, so instructions are active automatically when you open this repo. No setup needed.
+
+**Option 2: Global (all VS Code projects)**
+
+To apply these instructions to every project you open in VS Code:
+
+1. Go to **Settings → search `codeGeneration.instructions`**
+2. Add: `{ "file": "<absolute-path-to-this-repo>/instructions/global-copilot-instructions.md" }`
+3. Replace `<absolute-path-to-this-repo>` with the actual path (e.g., `/Users/yourname/repos/copilot-agents`)
+
+> **Note**: Unlike JetBrains which has a single global instructions file location, VS Code requires you to specify the absolute path in your user settings.
 
 ---
 
@@ -71,7 +80,9 @@ For global VS Code instructions (all projects), go to:
 
 1. Edit `instructions/global-copilot-instructions.md`
 2. Run `./scripts/sync-agents.sh --global`
-3. Restart your JetBrains IDE
+3. Restart your JetBrains IDE (IntelliJ IDEA, PyCharm, etc.)
+
+VS Code picks up changes automatically — no restart needed.
 
 ---
 
@@ -158,16 +169,28 @@ The 9 sections in `global-copilot-instructions.md` shape Copilot's behaviour acr
 | `django-review.agent.md` | Django review — models, views, ORM, security, best practices. |
 | `react-ts-review.agent.md` | React + TypeScript review — components, hooks, type safety, a11y. |
 | `git.agent.md` | Git workflow — commit messages, branch strategy, history clean-up, conflict resolution, PR hygiene. |
+| `feature-lifecycle.agent.md` | Feature lifecycle analysis — flow metrics, bottlenecks, team dynamics, AI impact, post-release adoption. |
 
-### How to use agents
+### How agents work in each IDE
 
-Agents live in `.github/agents/` and are picked up **automatically** from the repo root — no configuration needed.
+**JetBrains (IntelliJ IDEA, PyCharm, WebStorm, etc.)**
 
-**JetBrains** — agents appear in the Copilot Chat mode/agent dropdown. Select one at the start of a conversation to activate it.
+Agents in `.github/agents/*.agent.md` are **automatically discovered** when you open this repo — no sync script needed. They appear in the Copilot Chat mode/agent dropdown.
 
-**VS Code** — type `@` in Copilot Chat and select the agent from the dropdown.
+**VS Code**
 
-See **[PROMPTS.md](PROMPTS.md)** for ready-to-use prompts for each agent and instruction section.
+Agents in `.github/agents/` are discovered **only if they use VS Code tool names** (`codebase`, `problems`, `terminal`). The source agents in this repo use JetBrains tool names, so:
+
+- **In this repo (without sync)**: Agents won't work in VS Code because tool names don't match
+- **After running sync-agents.sh to deploy to a project**: The script generates `*.vscode.agent.md` variants with correct tool names automatically
+
+Type `@` in Copilot Chat to select an agent from the dropdown (if available).
+
+> **TL;DR**: JetBrains works out-of-the-box with this repo. VS Code needs the sync script to generate compatible agent variants.
+
+### Deploying agents to another project
+
+See **[Deploying to Another Project](#deploying-to-another-project)** below for how to copy agents (and auto-generate VS Code variants) to other repositories.
 
 ---
 
@@ -220,7 +243,9 @@ git diff --cached
 
 ## Tools Reference
 
-> ⚠️ **Tool names are IDE-specific.** JetBrains and VS Code use different names for the same capabilities. The source agents in this repo use JetBrains tool names. When deploying to a project with `sync-agents.sh`, the script **automatically generates a VS Code variant** of every agent alongside the JetBrains one — you only maintain one source file.
+> ⚠️ **CRITICAL: Tool names are IDE-specific.** JetBrains (IntelliJ IDEA, PyCharm, WebStorm, etc.) and VS Code use completely different tool names for the same capabilities. This is why agents written for one IDE won't work in the other without conversion.
+>
+> **The source agents in this repo use JetBrains tool names** because this is a JetBrains-first repo. When deploying to a project with `sync-agents.sh`, the script **automatically generates VS Code variants** of every agent — you only maintain one source file.
 
 ### How the dual-variant approach works
 
