@@ -30,3 +30,5 @@ venv/
 # OS
 Thumbs.db
 
+# Lifecycle analyses (user-specific, not committed)
+lifecycle-analyses/
