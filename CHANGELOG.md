@@ -9,6 +9,25 @@ Format: [Semantic Versioning](https://semver.org) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [2.2.0] — 2026-03-05
+
+### Added
+
+- `feature-lifecycle.agent.md` — Feature lifecycle analysis agent: comprehensive flow metrics
+  (lead time, cycle time, refinement lag), bottleneck identification, team dynamics, AI impact,
+  and post-release adoption via Pendo. Uses Jira, Confluence, and Pendo MCP servers.
+- Size-based targets: 10-14 days (small), 14-21 (medium), 21-28 (large) working days.
+- Working day calculations excluding weekends and Dec 21-Jan 6 holiday period.
+- Historical data from 7 analyzed features (Oct 2025 - Feb 2026).
+
+### Fixed
+
+- Lead time calculation: now uses RELEASED date (from release history) instead of resolutiondate,
+  aligning with DORA definition and preventing systematic understatement of time-to-customer.
+- Added fallback logic with warning flag when RELEASED date is unavailable.
+
+---
+
 ## [2.1.0] — 2026-02-22
 
 ### Added
