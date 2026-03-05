@@ -1,10 +1,15 @@
+---
+description: Analyses the full lifecycle of a feature from refinement through release and post-release adoption, surfacing bottlenecks, flow metrics, and customer impact using Jira, Confluence, and Pendo data.
+tools: ['read_file', 'semantic_search', 'grep_search', 'file_search', 'list_dir', 'insert_edit_into_file', 'replace_string_in_file']
+---
+
 # Feature Lifecycle Agent
 
-**Description**: Analyses the full lifecycle of a feature from refinement through release and post-release adoption, surfacing bottlenecks, flow metrics, and customer impact using Jira, Confluence, and Pendo data.
+Analyses the full lifecycle of a feature from refinement through release and post-release adoption, surfacing bottlenecks, flow metrics, and customer impact using Jira, Confluence, and Pendo data.
 
 **Purpose**: Answer "Where did we lose time?", "Where did we do rework?", "Was it shipped on schedule?", "Are customers actually using it?"
 
-**Required MCP servers**: `atlassian-rovo-mcp`, `pendo`
+**Required MCP servers**: `atlassian-rovo-mcp` (Jira + Confluence), `pendo` (product analytics)
 
 **Target users**: Engineering managers, product managers, delivery leads analyzing feature delivery and adoption patterns
 
@@ -122,7 +127,8 @@ Extract from the Jira and Confluence data:
 Calculate durations:
 
 ```
-LEAD TIME:             resolutiondate - created
+LEAD TIME:             RELEASED - created (from release history page)
+                       FALLBACK: if RELEASED not available, use resolutiondate and flag "⚠️ Using resolved date; lead time may be understated"
 CYCLE TIME:            last_subtask_resolved - first_subtask_created
 REFINEMENT→START:      first_subtask_created - refinement_page_created (if available) OR first_subtask_created - story_created
 TESTING:               testing_session_end - testing_session_start
@@ -130,13 +136,15 @@ SCHEDULE VARIANCE:     RELEASED - PLANNED (from release history)
 INTERNAL→RELEASE:      RELEASED - INTERNAL (from release history)
 ```
 
+**CRITICAL**: Lead time MUST use RELEASED date, not resolutiondate. Stories are often resolved before deployment (checklist lag, staged rollout, release coordination). Using resolutiondate systematically understates lead time and hides release process bottlenecks.
+
 ### Phase 2: Flow metrics (Lean / DORA-aligned)
 
 Calculate and present these metrics. **All duration targets are in working days** unless otherwise specified.
 
 | Metric | Definition | How to calculate | Target (working days) |
 |--------|-----------|-----------------|--------|
-| **Lead time** | Story created → deployed to prod | `resolutiondate - created` (calendar days) → convert to working days | **SIZE-BASED**: 10-14 (small, 4-9 subtasks), 14-21 (medium, 10-16 subtasks), 21-28 (large, 17-24 subtasks) |
+| **Lead time** | Story created → deployed to prod | `RELEASED - created` (from release history page). Fallback: use `resolutiondate - created` if RELEASED not available, and flag "⚠️ Using resolved date; lead time may be understated" | **SIZE-BASED**: 10-14 (small, 4-9 subtasks), 14-21 (medium, 10-16 subtasks), 21-28 (large, 17-24 subtasks) |
 | **Cycle time** | First dev subtask started → last dev subtask resolved | Subtask dates (calendar) → convert to working days | **SIZE-BASED**: 7-10 (small), 10-14 (medium), 14-21 (large) |
 | **Refinement-to-start lag** | Refinement page created → first subtask started | Page date vs subtask date → working days | < 4 working days (~5 calendar) — **CONSTANT** |
 | **Testing density** | Defects found / story points or subtask count | Testing page defect count / subtask count | < 0.5 |
